@@ -247,8 +247,8 @@ def save_numerics(
 
     var_map = var_map[
         ['LEVEL2', 'ITEMID', 'LEVEL1']
-    ].rename_axis(
-        {'LEVEL2': 'LEVEL2', 'LEVEL1': 'LEVEL1', 'ITEMID': 'itemid'}, axis=1
+    ].rename(
+        {'LEVEL2': 'LEVEL2', 'LEVEL1': 'LEVEL1', 'ITEMID': 'itemid'}, axis='columns'
     ).set_index('itemid')
 
     X['value'] = pd.to_numeric(X['value'], 'coerce')
@@ -889,11 +889,13 @@ if __name__ == '__main__':
 
 
         # TODO(mmd): Use querier, move to file
+        query_args['user'] = "postgres"
+        query_args['password'] = "postgres"
         con = psycopg2.connect(**query_args)
         cur = con.cursor()
-
+        cur.execute("""set search_path to mimiciii;""")
         print("  starting db query with %d subjects..." % (len(icuids_to_keep)))
-        cur.execute('SET search_path to ' + schema_name)
+        #cur.execute('SET search_path to ' + schema_name)
         query = \
         """
         select c.subject_id, i.hadm_id, c.icustay_id, c.charttime, c.itemid, c.value, valueuom

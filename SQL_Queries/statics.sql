@@ -3,7 +3,7 @@ select distinct
     i.hadm_id,
     i.icustay_id,
     i.gender,
-    i.admission_age as age,
+    i.age as age,
     i.ethnicity,
     i.admission_type,
     i.hospital_expire_flag,
@@ -24,13 +24,16 @@ select distinct
     c.dnr_first,
     c.fullcode,
     c.dnr,
-    c.timednr_chart,
+--    c.timednr_chart,
+    c.dnr_first_charttime,
     c.cmo_first,
     c.cmo_last,
     c.cmo,
     c.cmo_ds,
-    c.timecmo_chart,
-    c.timecmo_nursingnote,
+--    c.timecmo_chart,
+    c.cmo_first_charttime,
+--    c.timecmo_nursingnote,
+    c.cmo_nursingnote_charttime,
     COALESCE(f.readmission_30, 0) AS readmission_30
 FROM icustay_detail i
     INNER JOIN admissions a ON i.hadm_id = a.hadm_id
@@ -49,7 +52,7 @@ WHERE s.first_careunit NOT like 'NICU'
     and i.hadm_id is not null and i.icustay_id is not null
     and i.hospstay_seq = 1
     and i.icustay_seq = 1
-    and i.admission_age >= {min_age}
+    and i.age >= {min_age}
     and i.los_icu >= {min_day}
     and (i.outtime >= (i.intime + interval '{min_dur} hours'))
     and (i.outtime <= (i.intime + interval '{max_dur} hours'))
